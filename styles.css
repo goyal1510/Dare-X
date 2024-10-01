@@ -7,13 +7,13 @@ body {
   justify-content: center;
   align-items: flex-start;
   margin: 0;
+  box-sizing: content-box;
 }
 
 .container {
   display: flex;
   flex-direction: column;
   width: 90%;
-  max-width: 1200px;
   margin: auto;
 }
 
@@ -234,4 +234,22 @@ tbody tr:hover {
 
 .modal-content button:hover {
   background-color: #ff79b0;
+}
+
+@media (max-width: 780px) {
+  .generator-record {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .generator-section {
+    width: 80%;
+    margin: 10px;
+  }
+
+  .record-section {
+    width: 80%;
+    margin: 10px;
+  }
 }
