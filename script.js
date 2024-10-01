@@ -1,10 +1,27 @@
-let dares = [
-  "Talk like a pirate for the next 2 minutes.",
-  "Sing the chorus of your favorite song.",
-  "Do 20 push-ups.",
-  "Post a silly selfie on social media.",
-  "Imitate someone in the group.",
-];
+// script.js
+
+let dares = [];
+
+// Function to fetch dares from dares.json
+async function loadDares() {
+  try {
+    const response = await fetch("dares.json"); // Adjust the path if necessary
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    dares = await response.json();
+    console.log("Dares loaded:", dares);
+  } catch (error) {
+    console.error("Error loading dares:", error);
+  }
+}
+
+// Call loadDares when the DOM is fully loaded
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadDares();
+  // Initialize other functionalities that depend on dares here
+  updateScore();
+});
 
 // Variables to store player names
 let player1Name = "Player 1";
@@ -13,12 +30,13 @@ let player2Name = "Player 2";
 // Show the modal when the page loads
 document.addEventListener("DOMContentLoaded", () => {
   const modal = document.getElementById("player-name-modal");
+  modal.style.display = "flex"; // Ensure the modal is displayed
 });
 
 // Add event listener to Start Game button
 document.getElementById("start-game-btn").addEventListener("click", () => {
-  const player1Input = document.getElementById("player1").value;
-  const player2Input = document.getElementById("player2").value;
+  const player1Input = document.getElementById("player1").value.trim();
+  const player2Input = document.getElementById("player2").value.trim();
 
   if (player1Input && player2Input) {
     player1Name = player1Input;
@@ -99,6 +117,8 @@ function resetDare() {
   completedDares.player2.completed = [];
   completedDares.player2.notDone = [];
   updateScore(); // Reset scores
+  // Optionally, you can also clear the record list
+  document.getElementById("record-list").innerHTML = "";
 }
 
 // Function to add a record to the table and update completed/not done dares
@@ -112,10 +132,10 @@ function addRecord(dare, player, status) {
   const recordList = document.getElementById("record-list");
   const newRow = document.createElement("tr");
   newRow.innerHTML = `
-              <td>${dare}</td>
-              <td>${status}</td>
-              <td>${player === "player1" ? player1Name : player2Name}</td>
-          `;
+    <td>${dare}</td>
+    <td>${status}</td>
+    <td>${player === "player1" ? player1Name : player2Name}</td>
+  `;
   recordList.appendChild(newRow);
 
   updateScore(); // Update scores after adding a record
@@ -132,6 +152,10 @@ function updateScore() {
 
 // Button event listeners
 document.getElementById("randomize-btn").addEventListener("click", () => {
+  if (dares.length === 0) {
+    alert("Dares are still loading. Please wait.");
+    return;
+  }
   const player = document.querySelector('input[name="player"]:checked').value;
   const dareDisplay = document.getElementById("dare-display");
   const randomDare = getRandomDare(player);
